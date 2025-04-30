@@ -27,9 +27,12 @@ export default function Home() {
         // Optionally fetch collections if needed for tabs
         // For simplicity, derive collections from job titles or add an API endpoint
         const derivedCollections = Array.from(
-          new Set(fetchedJobs.map(job => job.title.split(' ').slice(0, 2).join(' ')))
+          new Set(fetchedJobs.map(job => job.collection))
         );
         setCollections(derivedCollections);
+        if (derivedCollections.length > 0) {
+          setActiveTab(derivedCollections[0]);
+        }
       } catch (error) {
         console.error('Error fetching jobs:', error);
       }
@@ -70,10 +73,6 @@ export default function Home() {
   // Categories for tabs
   const jobTabs = [
     { id: "all", label: "All Jobs", count: filteredJobs.length },
-    // { id: "recent", label: "Recent Postings", count: recentJobs.length },
-    // { id: "popular", label: "Popular Jobs", count: popularJobs.length },
-    // { id: "fulltime", label: "Full-time", count: filteredJobs.filter(job => job.type === "full-time").length },
-    // { id: "remote", label: "Remote", count: filteredJobs.filter(job => job.location.toLowerCase().includes("remote")).length },
     ...collectionJobs,
   ];
 

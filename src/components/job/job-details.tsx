@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatSalary, formatDate } from "@/lib/utils";
+import { formatSalary } from "@/lib/utils";
 import {
   FiMapPin,
   FiClock,
@@ -65,7 +65,7 @@ export function JobDetails({ job }: JobDetailsProps) {
                   </div>
                   <div className="flex items-center">
                     <FiClock className="mr-1.5 h-4 w-4 text-gray-500" />
-                    <span>{formatDate(job.postedAt)}</span>
+                    <span>{job.postedAt}</span>
                   </div>
                 </div>
               </div>

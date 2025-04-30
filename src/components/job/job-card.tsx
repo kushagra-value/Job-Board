@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { formatSalary, formatDate } from "@/lib/utils"
+import { formatSalary } from "@/lib/utils"
 import { FiMapPin, FiClock, FiBriefcase, FiDollarSign } from "react-icons/fi"
 import { useState } from "react"
 
@@ -53,7 +53,7 @@ export function JobCard({ job }: JobCardProps) {
               </div>
               <div className="flex items-center">
                 <FiClock className="mr-1 h-4 w-4 text-gray-500" />
-                <span>{formatDate(job.postedAt)}</span>
+                <span>{job.postedAt}</span>
               </div>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">

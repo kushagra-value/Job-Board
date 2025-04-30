@@ -33,6 +33,7 @@ export async function fetchAllJobs(): Promise<Job[]> {
       type: 'full-time', // Default or derive from data if available
       experience: job.experience_level,
       aboutCompany: job.about_company || '', // Optional field
+      collection: collectionName
     }));
 
     allJobs = [...allJobs, ...mappedJobs];
@@ -74,6 +75,7 @@ export async function fetchJobById(id: string): Promise<Job | null> {
         type: 'full-time', // Default or derive from data if available
         experience: job.experience_level,
         aboutCompany: job.about_company || '', // Optional field
+        collection: collectionName
       };
     }
   }

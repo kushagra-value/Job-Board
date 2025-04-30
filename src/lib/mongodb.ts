@@ -1,6 +1,5 @@
 import { MongoClient, Db } from 'mongodb';
-
-const uri = 'mongodb+srv://valuebound:E2gfdCBGyPrGy9C@cluster0.d3y7p.mongodb.net/';
+import 'dotenv/config';
 const dbName = 'naukri_job_db';
 
 let cachedClient: MongoClient | null = null;
@@ -10,7 +9,10 @@ export async function connectToDatabase() {
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };
   }
-
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI is not defined in the environment variables');
+  }
   const client = new MongoClient(uri, {
     // Optional: Add connection options if needed
   });
