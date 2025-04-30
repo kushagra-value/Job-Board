@@ -67,7 +67,7 @@ export default function Home() {
   const collectionJobs = collections.map(collection => ({
     id: collection,
     label: collection,
-    count: filteredJobs.filter(job => job.collection === collection).length,
+    count: filteredJobs.filter(job => job.title.toLowerCase().includes(collection.toLowerCase())).length,
   }));
 
   // Categories for tabs
