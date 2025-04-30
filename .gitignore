@@ -13,6 +13,7 @@ yarn-error.log*
 
 # Build output
 /.next
+next-env.d.ts
 /out
 /build
 
