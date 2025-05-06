@@ -3,8 +3,8 @@ import './globals.css'
 import { ThemeProvider } from "@/components/theme-provider"
 
 export const metadata: Metadata = {
-  title: 'LinkedIn Job Tracker',
-  description: 'Track and analyze LinkedIn job postings',
+  title: 'Vyuhire',
+  description: 'Track and analyze various job postings',
 }
 
 export default function RootLayout({
