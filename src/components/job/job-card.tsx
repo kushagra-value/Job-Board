@@ -57,31 +57,26 @@ export function JobCard({ job }: JobCardProps) {
               </div>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
-              {job.skills.slice(0, 4).map((skill, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-medium text-primary-700"
-                >
-                  {skill}
-                </span>
-              ))}
-              {job.skills.length > 4 && (
-                <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
-                  +{job.skills.length - 4} more
-                </span>
-              )}
+              {job.skills && job.skills.length > 0 ? (
+                <>
+                  {job.skills.slice(0, 4).map((skill, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-medium text-primary-700"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                  {job.skills.length > 4 && (
+                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                      +{job.skills.length - 4} more
+                    </span>
+                  )}
+                </>
+              ) : null}
             </div>
           </div>
         </Link>
-        <button 
-          onClick={() => setIsSaved(!isSaved)} 
-          className="absolute top-5 right-5 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
-          aria-label={isSaved ? "Unsave job" : "Save job"}
-        >
-          {/* <FiBookmark 
-            className={`h-5 w-5 ${isSaved ? "fill-primary-500 text-primary-500" : "text-gray-400"}`} 
-          /> */}
-        </button>
       </div>
       <div className="flex border-t p-4 justify-end items-center">
         <Link 

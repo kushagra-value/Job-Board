@@ -1,26 +1,24 @@
 "use client"
 
 import { PageLayout } from "@/components/layout/page-layout";
-import { JobSearch } from "@/components/job/job-search";
 import { JobTabs } from "@/components/job/job-tabs";
 import { JobList } from "@/components/job/job-list";
 import { Job } from "@/data/jobs";
 import { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 // Utility function to slugify collection names
 function slugify(text: string): string {
   return text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 }
 
-export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
+export default function CollectionPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [collections, setCollections] = useState<string[]>([]);
+  const params = useParams();
   const router = useRouter();
+  const slug = params.collection as string;
 
-  // Fetch jobs and collections from API
   useEffect(() => {
     async function loadJobs() {
       try {
@@ -31,7 +29,6 @@ export default function Home() {
         const fetchedJobs: Job[] = await response.json();
         setJobs(fetchedJobs);
 
-        // Get unique collections
         const derivedCollections = Array.from(
           new Set(fetchedJobs.map(job => job.collection))
         );
@@ -43,31 +40,23 @@ export default function Home() {
     loadJobs();
   }, []);
 
-  // Filter jobs based on search query
-  const filteredJobs = jobs.filter(job => {
-    if (!searchQuery) return true;
-
-    const query = searchQuery.toLowerCase();
-    return (
-      job.title.toLowerCase().includes(query) ||
-      job.company.toLowerCase().includes(query) ||
-      job.location.toLowerCase().includes(query) ||
-      job.skills.some(skill => skill.toLowerCase().includes(query))
-    );
-  });
+  // Find the original collection name from the slug
+  const originalCollection = collections.find(col => slugify(col) === slug);
+  const filteredJobs = originalCollection 
+    ? jobs.filter(job => job.collection === originalCollection) 
+    : [];
 
   // Categories for tabs
   const jobTabs = [
-    { id: "all", label: "All Jobs", count: filteredJobs.length },
-    ...collections.map(collection => ({
-      id: collection,
-      label: collection,
-      count: filteredJobs.filter(job => job.collection === collection).length,
+    { id: "all", label: "All Jobs", count: jobs.length },
+    ...collections.map(col => ({
+      id: col,
+      label: col,
+      count: jobs.filter(job => job.collection === col).length,
     }))
   ];
 
   const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId);
     if (tabId === "all") {
       router.push("/");
     } else {
@@ -78,15 +67,10 @@ export default function Home() {
 
   return (
     <PageLayout>
-      <JobSearch onSearch={(query) => setSearchQuery(query)} />
       <JobTabs tabs={jobTabs} onChange={handleTabChange} />
       <JobList
         jobs={filteredJobs}
-        title={
-          searchQuery
-            ? `Search Results for "${searchQuery}"`
-            : "All Jobs"
-        }
+        title={originalCollection ? `${originalCollection} Jobs` : "Collection Not Found"}
       />
     </PageLayout>
   );

@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { usePathname } from "next/navigation"
 
 interface JobTabsProps {
   tabs: {
@@ -14,12 +15,19 @@ interface JobTabsProps {
 }
 
 export function JobTabs({ tabs, onChange }: JobTabsProps) {
-  const [activeTab, setActiveTab] = useState(tabs[0]?.id || "")
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState("all");
+
+  useEffect(() => {
+    // Set active tab based on current path
+    const collection = pathname.split('/')[1];
+    setActiveTab(collection || "all");
+  }, [pathname]);
 
   const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId)
-    onChange(tabId)
-  }
+    setActiveTab(tabId);
+    onChange(tabId);
+  };
 
   return (
     <div className="border-b">
@@ -48,11 +56,10 @@ export function JobTabs({ tabs, onChange }: JobTabsProps) {
               >
                 {tab.count}
               </span>
-              
             </button>
           ))}
         </nav>
       </div>
     </div>
-  )
+  );
 }

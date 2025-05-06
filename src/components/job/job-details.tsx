@@ -128,8 +128,7 @@ export function JobDetails({ job }: JobDetailsProps) {
                 <div className="space-y-3">
                   <Button
                     onClick={() => setIsUploadModalOpen(true)}
-                    className="w-full mb-3"
-                    variant="outline"
+                    className="w-full mb-3 h-11"
                   >
                     Check Compatibility
                   </Button>
@@ -139,7 +138,7 @@ export function JobDetails({ job }: JobDetailsProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Button className="w-full">Apply Now</Button>
+                      <Button className="w-full" variant="outline">Apply Now</Button>
                     </Link>
                   ) : (
                     <Button className="w-full" disabled>
