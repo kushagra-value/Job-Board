@@ -168,10 +168,46 @@ export function ResumeUploadModal({ isOpen, onClose, jobTitle, skills, jobDescri
                 </div>
                 <h3 className="mt-4 text-xl font-semibold text-gray-900">Overall Match</h3>
                 <p className="mt-2 text-gray-600">{analysisResult.overall_assessment.remarks}</p>
+                <h4 className="font-semibold text-gray-900 mt-4">Skills to improve on:</h4>
+                <p>{analysisResult.unverified_skills.join(', ') || 'None'}</p>
+                <div className="space-y-6">
+                      <div>
+                        <h4 className="font-semibold text-green-600 mb-2">Strengths</h4>
+                        {Object.values(analysisResult.green_flags).flat().length > 0 ? (
+                          <ul className="space-y-2">
+                            {Object.values(analysisResult.green_flags).flat().map((flag: any, index: number) => (
+                              <li key={index} className="flex items-start">
+                                <FiCheckCircle className="text-green-500 mt-1 mr-2" />
+                                <span className="text-gray-700">{flag.details} </span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-gray-600">No notable strengths identified.</p>
+                        )}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-red-600 mb-2">Concerns</h4>
+                        {Object.values(analysisResult.red_flags).flat().length > 0 ? (
+                          <ul className="space-y-2">
+                            {Object.values(analysisResult.red_flags).flat().map((flag: any, index: number) => (
+                              <li key={index} className="flex items-start">
+                                <FiAlertCircle className="text-red-500 mt-1 mr-2" />
+                                <div>
+                                  <p className="text-gray-700"><strong>{flag.type}</strong> {flag.reason}</p>
+                                  </div>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-gray-600">No notable concerns identified.</p>
+                        )}
+                      </div>
+                    </div>
               </div>
 
               {/* Scoring Details */}
-              <div className="mb-8">
+              {/* <div className="mb-8">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Scoring Breakdown</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -195,9 +231,9 @@ export function ResumeUploadModal({ isOpen, onClose, jobTitle, skills, jobDescri
                     <p className="text-sm text-gray-600 mt-1">{analysisResult.scoring.overall_score}%</p>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
-              {/* Quick Summary */}
+              {/* Quick Summary
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Quick Summary</h3>
                 <ul className="list-disc pl-5 space-y-2 text-gray-700">
@@ -205,7 +241,7 @@ export function ResumeUploadModal({ isOpen, onClose, jobTitle, skills, jobDescri
                     <li key={index}>{point}</li>
                   ))}
                 </ul>
-              </div>
+              </div> */}
 
               {/* Selection Decision */}
               <div className="mb-8">
@@ -235,7 +271,7 @@ export function ResumeUploadModal({ isOpen, onClose, jobTitle, skills, jobDescri
                           <p className="text-sm text-gray-600 mt-1">{skill.remark}</p>
                         </div>
                       ))}
-                      <p className="mt-2 text-sm">
+                      {/* <p className="mt-2 text-sm">
                         <strong>Missing Skills:</strong> {analysisResult.skill_evaluation.top_missing_skills.join(', ')}
                       </p>
                       <p className="mt-2 text-sm">
@@ -249,7 +285,7 @@ export function ResumeUploadModal({ isOpen, onClose, jobTitle, skills, jobDescri
                         <p><strong>Technical:</strong> {analysisResult.validated_skills.technical.join(', ') || 'None'}</p>
                         <p><strong>Functional:</strong> {analysisResult.validated_skills.functional.join(', ') || 'None'}</p>
                         <p><strong>Leadership:</strong> {analysisResult.validated_skills.leadership.join(', ') || 'None'}</p>
-                      </div>
+                      </div> */}
                       <h4 className="font-semibold text-gray-900 mt-4">Unverified Skills</h4>
                       <p>{analysisResult.unverified_skills.join(', ') || 'None'}</p>
                     </div>
@@ -257,27 +293,16 @@ export function ResumeUploadModal({ isOpen, onClose, jobTitle, skills, jobDescri
                 </AccordionItem>
 
                 <AccordionItem value="projects">
-                  <AccordionTrigger>Key Projects</AccordionTrigger>
+                  <AccordionTrigger>Quick Summary</AccordionTrigger>
+                  
                   <AccordionContent>
-                    {analysisResult.key_projects.length > 0 ? (
-                      <div className="space-y-4">
-                        {analysisResult.key_projects.map((project: any, index: number) => (
-                          <div key={index} className="border-l-4 border-primary-500 pl-4">
-                            <h4 className="text-sm font-medium text-gray-900">{project.name}</h4>
-                            <p className="text-sm text-gray-600"><strong>Duration:</strong> {project.duration}</p>
-                            <p className="text-sm text-gray-600"><strong>Scope:</strong> {project.scope}</p>
-                            <p className="text-sm text-gray-600"><strong>Contribution:</strong> {project.contribution}</p>
-                            <p className="text-sm text-gray-600"><strong>Impact:</strong> {project.impact}</p>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-600">No key projects identified.</p>
-                    )}
+                  {analysisResult.quick_summary.map((point: string, index: number) => (
+                    <li key={index}>{point}</li>
+                  ))}
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="flags">
+                {/* <AccordionItem value="flags">
                   <AccordionTrigger>Strengths & Concerns</AccordionTrigger>
                   <AccordionContent>
                     <div className="space-y-6">
@@ -315,7 +340,7 @@ export function ResumeUploadModal({ isOpen, onClose, jobTitle, skills, jobDescri
                       </div>
                     </div>
                   </AccordionContent>
-                </AccordionItem>
+                </AccordionItem> */}
               </Accordion>
 
               {/* Buttons */}
