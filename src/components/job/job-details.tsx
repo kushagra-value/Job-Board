@@ -9,6 +9,7 @@ import {
   FiDollarSign,
   FiDownload,
 } from "react-icons/fi";
+import { ImProfile } from "react-icons/im";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ResumeUploadModal } from "@/components/resume/resume-upload-modal";
@@ -28,6 +29,7 @@ interface JobDetailsProps {
     requirements?: string[];
     responsibilities?: string[];
     aboutCompany?: string;
+    experience?: string;
   };
 }
 
@@ -55,6 +57,10 @@ export function JobDetails({ job }: JobDetailsProps) {
                   <span className="font-medium">{job.company}</span>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-y-2 gap-x-4 text-sm text-gray-600">
+                  <div className="flex items-center">
+                    <ImProfile className="mr-1.5 h-4 w-4 text-gray-500" />
+                    <span>{job.experience}</span>
+                  </div>
                   <div className="flex items-center">
                     <FiMapPin className="mr-1.5 h-4 w-4 text-gray-500" />
                     <span>{job.location}</span>
@@ -203,11 +209,13 @@ export function JobDetails({ job }: JobDetailsProps) {
 
       {/* Resume upload modal */}
       <ResumeUploadModal
-        isOpen={isUploadModalOpen}
-        onClose={() => setIsUploadModalOpen(false)}
-        jobTitle={job.title}
-        skills={job.skills}
-      />
+  isOpen={isUploadModalOpen}
+  onClose={() => setIsUploadModalOpen(false)}
+  jobTitle={job.title}
+  skills={job.skills}
+  jobDescription={job.description}
+  requiredExperience={job.experience || "0 years"}
+/>
     </>
   );
 }
