@@ -5,19 +5,30 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatSalary(salary: string | number): string {
-  if (typeof salary === 'string' && salary.toLowerCase() === 'not disclosed') {
+export function formatSalary(salary: string | number | null | undefined): string {
+  if (salary === null || salary === undefined) {
     return 'Not Disclosed';
   }
+  
+  if (typeof salary === 'string') {
+    if (salary.toLowerCase() === 'not disclosed') {
+      return 'Not Disclosed';
+    }
+    // Handle ranges like "150000-180000"
+    if (salary.includes('-')) {
+      const [min, max] = salary.split('-').map(Number);
+      if (!isNaN(min) && !isNaN(max)) {
+        return `$${min.toLocaleString()} - $${max.toLocaleString()}`;
+      }
+    }
+    return salary;
+  }
+  
   if (typeof salary === 'number') {
     return `$${salary.toLocaleString()}`;
   }
-  // Handle ranges like "150000-180000"
-  if (typeof salary === 'string' && salary.includes('-')) {
-    const [min, max] = salary.split('-').map(Number);
-    return `$${min.toLocaleString()} - $${max.toLocaleString()}`;
-  }
-  return salary.toString();
+
+  return 'Not Disclosed';
 }
 
 export function formatDate(dateString: string): string {
