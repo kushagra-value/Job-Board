@@ -59,7 +59,7 @@ export function ResumeUploadModal({ isOpen, onClose, jobTitle, skills, jobDescri
     formData.append('skills', skills.join(','))
 
     try {
-      const response = await fetch('https://job-board-backend-murex.vercel.app/analyze-resume', {
+      const response = await fetch('http://20.84.71.48:8001/api/analyze-resume', {
         method: 'POST',
         body: formData,
       })
