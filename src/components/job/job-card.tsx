@@ -35,7 +35,10 @@ export function JobCard({ job }: JobCardProps) {
       className="card card-hover overflow-hidden"
     >
       <div className="relative">
-        <Link href={`/jobs/${job.id}`} className="block p-5">
+        <Link
+          href={`/jobs/${companySlug}/${titleSlug}/${job.id}`}
+          className="block p-5"
+        >
           <div className="flex flex-col gap-3">
             <div className="flex justify-between">
               <h3 className="text-lg font-semibold text-gray-900 hover:text-primary-500 transition-colors">
