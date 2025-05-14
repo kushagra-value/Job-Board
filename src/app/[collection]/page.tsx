@@ -70,7 +70,7 @@ export default function CollectionPage() {
       <JobTabs tabs={jobTabs} onChange={handleTabChange} />
       <JobList
         jobs={filteredJobs}
-        title={originalCollection ? `${originalCollection} Jobs` : "Collection Not Found"}
+        title={originalCollection ? `${originalCollection} Jobs` : "Loading..."}
       />
     </PageLayout>
   );
