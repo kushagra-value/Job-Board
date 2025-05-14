@@ -14,4 +14,5 @@ export interface Job {
   experience: string; // 0-1 years, 1-3 years, 3-5 years, 5+ years
   aboutCompany?: string; // Optional field
   collection: string; // Optional field for collection-based jobs
+  about_the_role?: string; // Optional field for role description
 }
