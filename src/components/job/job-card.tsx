@@ -1,28 +1,32 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { formatSalary } from "@/lib/utils"
-import { FiMapPin, FiClock, FiBriefcase, FiDollarSign } from "react-icons/fi"
-import { useState } from "react"
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { formatSalary } from "@/lib/utils";
+import { FiMapPin, FiClock, FiBriefcase, FiDollarSign } from "react-icons/fi";
+import { useState } from "react";
+import slugify from "slugify";
 
 interface JobCardProps {
   job: {
-    id: string
-    title: string
-    company: string
-    location: string
-    salary: string | number
-    skills: string[]
-    postedAt: string
-    applyLink: string
-    description: string
-  }
+    id: string;
+    title: string;
+    company: string;
+    location: string;
+    salary: string | number;
+    skills: string[];
+    postedAt: string;
+    applyLink: string;
+    description: string;
+  };
 }
 
 export function JobCard({ job }: JobCardProps) {
-  const [isSaved, setIsSaved] = useState(false)
-  
+  const [isSaved, setIsSaved] = useState(false);
+
+  const companySlug = slugify(job.company, { lower: true, strict: true });
+  const titleSlug = slugify(job.title, { lower: true, strict: true });
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -31,7 +35,10 @@ export function JobCard({ job }: JobCardProps) {
       className="card card-hover overflow-hidden"
     >
       <div className="relative">
-        <Link href={`/jobs/${job.id}`} className="block p-5">
+        <Link
+          href={`/jobs/${companySlug}/${titleSlug}/${job.id}`}
+          className="block p-5"
+        >
           <div className="flex flex-col gap-3">
             <div className="flex justify-between">
               <h3 className="text-lg font-semibold text-gray-900 hover:text-primary-500 transition-colors">
@@ -79,13 +86,13 @@ export function JobCard({ job }: JobCardProps) {
         </Link>
       </div>
       <div className="flex border-t p-4 justify-end items-center">
-        <Link 
-          href={`/jobs/${job.id}`}
+        <Link
+          href={`/jobs/${companySlug}/${titleSlug}/${job.id}`}
           className="text-sm font-medium text-primary-600 hover:text-primary-700"
         >
           View Details
         </Link>
       </div>
     </motion.div>
-  )
+  );
 }
