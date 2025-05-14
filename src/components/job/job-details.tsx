@@ -30,6 +30,7 @@ interface JobDetailsProps {
     responsibilities?: string[];
     aboutCompany?: string;
     experience?: string;
+    about_the_role?: string;
   };
 }
 
@@ -50,7 +51,6 @@ export function JobDetails({ job }: JobDetailsProps) {
                   <h1 className="text-2xl font-bold text-gray-900">
                     {job.title}
                   </h1>
-                  
                 </div>
                 <div className="mt-2 flex items-center text-gray-700">
                   <FiBriefcase className="mr-2 h-5 w-5 text-gray-500" />
@@ -102,6 +102,7 @@ export function JobDetails({ job }: JobDetailsProps) {
                   <p className="text-gray-700 whitespace-pre-line">
                     {job.description}
                   </p>
+                  <p className="text-gray-700 mt-3">{job.about_the_role}</p>
                 </div>
               </div>
 
@@ -144,7 +145,9 @@ export function JobDetails({ job }: JobDetailsProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Button className="w-full" variant="outline">Apply Now</Button>
+                      <Button className="w-full" variant="outline">
+                        Apply Now
+                      </Button>
                     </Link>
                   ) : (
                     <Button className="w-full" disabled>
@@ -196,9 +199,7 @@ export function JobDetails({ job }: JobDetailsProps) {
                     //     <span>{job.location}</span>
                     //   </div>
                     // </div>
-                    <div>
-                      Coming Soon...
-                    </div>
+                    <div>Coming Soon...</div>
                   ))}
                 </div>
               </div>
@@ -209,13 +210,13 @@ export function JobDetails({ job }: JobDetailsProps) {
 
       {/* Resume upload modal */}
       <ResumeUploadModal
-  isOpen={isUploadModalOpen}
-  onClose={() => setIsUploadModalOpen(false)}
-  jobTitle={job.title}
-  skills={job.skills}
-  jobDescription={job.description}
-  requiredExperience={job.experience || "0 years"}
-/>
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        jobTitle={job.title}
+        skills={job.skills}
+        jobDescription={job.description}
+        requiredExperience={job.experience || "0 years"}
+      />
     </>
   );
 }
