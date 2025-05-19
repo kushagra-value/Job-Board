@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { PageLayout } from "@/components/layout/page-layout";
 import { JobSearch } from "@/components/job/job-search";
@@ -6,11 +6,14 @@ import { JobTabs } from "@/components/job/job-tabs";
 import { JobList } from "@/components/job/job-list";
 import { Job } from "@/data/jobs";
 import { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 // Utility function to slugify collection names
 function slugify(text: string): string {
-  return text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  return text
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
 }
 
 export default function Home() {
@@ -24,27 +27,27 @@ export default function Home() {
   useEffect(() => {
     async function loadJobs() {
       try {
-        const response = await fetch('/api/jobs');
+        const response = await fetch("/api/jobs");
         if (!response.ok) {
-          throw new Error('Failed to fetch jobs');
+          throw new Error("Failed to fetch jobs");
         }
         const fetchedJobs: Job[] = await response.json();
         setJobs(fetchedJobs);
 
         // Get unique collections
         const derivedCollections = Array.from(
-          new Set(fetchedJobs.map(job => job.collection))
+          new Set(fetchedJobs.map((job) => job.collection))
         );
         setCollections(derivedCollections);
       } catch (error) {
-        console.error('Error fetching jobs:', error);
+        console.error("Error fetching jobs:", error);
       }
     }
     loadJobs();
   }, []);
 
   // Filter jobs based on search query
-  const filteredJobs = jobs.filter(job => {
+  const filteredJobs = jobs.filter((job) => {
     if (!searchQuery) return true;
 
     const query = searchQuery.toLowerCase();
@@ -52,18 +55,18 @@ export default function Home() {
       job.title.toLowerCase().includes(query) ||
       job.company.toLowerCase().includes(query) ||
       job.location.toLowerCase().includes(query) ||
-      job.skills.some(skill => skill.toLowerCase().includes(query))
+      job.skills.some((skill) => skill.toLowerCase().includes(query))
     );
   });
 
   // Categories for tabs
   const jobTabs = [
     { id: "all", label: "All Jobs", count: filteredJobs.length },
-    ...collections.map(collection => ({
+    ...collections.map((collection) => ({
       id: collection,
       label: collection,
-      count: filteredJobs.filter(job => job.collection === collection).length,
-    }))
+      count: filteredJobs.filter((job) => job.collection === collection).length,
+    })),
   ];
 
   const handleTabChange = (tabId: string) => {
@@ -82,11 +85,8 @@ export default function Home() {
       <JobTabs tabs={jobTabs} onChange={handleTabChange} />
       <JobList
         jobs={filteredJobs}
-        title={
-          searchQuery
-            ? `Search Results for "${searchQuery}"`
-            : "All Jobs"
-        }
+        title={searchQuery ? `Search Results for "${searchQuery}"` : "All Jobs"}
+        isLoading={false}
       />
     </PageLayout>
   );
