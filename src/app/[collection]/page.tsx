@@ -15,12 +15,14 @@ function slugify(text: string): string {
 export default function CollectionPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [collections, setCollections] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const params = useParams();
   const router = useRouter();
   const slug = params.collection as string;
 
   useEffect(() => {
     async function loadJobs() {
+      setIsLoading(true);
       try {
         const response = await fetch('/api/jobs');
         if (!response.ok) {
@@ -35,6 +37,8 @@ export default function CollectionPage() {
         setCollections(derivedCollections);
       } catch (error) {
         console.error('Error fetching jobs:', error);
+      }finally {
+        setIsLoading(false); // Set loading to false after fetch completes
       }
     }
     loadJobs();
@@ -71,6 +75,7 @@ export default function CollectionPage() {
       <JobList
         jobs={filteredJobs}
         title={originalCollection ? `${originalCollection} Jobs` : "Loading..."}
+        isLoading={isLoading}
       />
     </PageLayout>
   );

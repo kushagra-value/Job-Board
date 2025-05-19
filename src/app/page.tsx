@@ -18,11 +18,13 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("all");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [collections, setCollections] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   // Fetch jobs and collections from API
   useEffect(() => {
     async function loadJobs() {
+      setIsLoading(true);
       try {
         const response = await fetch('/api/jobs');
         if (!response.ok) {
@@ -38,6 +40,8 @@ export default function Home() {
         setCollections(derivedCollections);
       } catch (error) {
         console.error('Error fetching jobs:', error);
+      } finally {
+        setIsLoading(false); // Set loading to false after fetch completes
       }
     }
     loadJobs();
@@ -87,6 +91,7 @@ export default function Home() {
             ? `Search Results for "${searchQuery}"`
             : "All Jobs"
         }
+        isLoading={isLoading}
       />
     </PageLayout>
   );

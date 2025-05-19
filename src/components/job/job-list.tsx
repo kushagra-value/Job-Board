@@ -21,21 +21,14 @@ interface Job {
 interface JobListProps {
   jobs: Job[];
   title?: string;
+  isLoading: boolean;
 }
 
-export function JobList({ jobs, title = "All Jobs" }: JobListProps) {
+export function JobList({ jobs, title = "All Jobs", isLoading }: JobListProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
 
-  const [isLoading, setIsLoading] = useState(true);
-  // Simulate loading on mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500); // Adjust duration as needed
-    return () => clearTimeout(timer);
-  }, []);
 
   // Extract unique companies and locations for filters
   const companies = Array.from(new Set(jobs.map((job) => job.company)));
@@ -188,15 +181,15 @@ export function JobList({ jobs, title = "All Jobs" }: JobListProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading ? (
-          // Display skeleton loaders
+          // Display skeleton loaders while loading
           Array.from({ length: 6 }).map((_, index) => (
             <SkeletonCard key={index} />
           ))
         ) : filteredJobs.length > 0 ? (
-          // Display job cards
+          // Display job cards when jobs are available
           filteredJobs.map((job) => <JobCard key={job.id} job={job} />)
         ) : (
-          // Display no jobs found message
+          // Display no jobs found message when no jobs match filters
           <div className="col-span-full text-center py-12">
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               No jobs found
