@@ -1,6 +1,6 @@
-import { MongoClient, Db } from 'mongodb';
-import 'dotenv/config';
-const dbName = 'naukri_job_db';
+import { MongoClient, Db } from "mongodb";
+import "dotenv/config";
+const dbName = "google_jobs_db";
 
 let cachedClient: MongoClient | null = null;
 let cachedDb: Db | null = null;
@@ -11,7 +11,7 @@ export async function connectToDatabase() {
   }
   const uri = process.env.MONGODB_URI;
   if (!uri) {
-    throw new Error('MONGODB_URI is not defined in the environment variables');
+    throw new Error("MONGODB_URI is not defined in the environment variables");
   }
   const client = new MongoClient(uri, {
     // Optional: Add connection options if needed

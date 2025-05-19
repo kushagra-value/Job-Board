@@ -15,7 +15,7 @@ interface Job {
   skills: string[];
   postedAt: string;
   applyLink: string;
-  description: string;
+  description: object;
 }
 
 interface JobListProps {

@@ -17,7 +17,7 @@ interface JobCardProps {
     skills: string[];
     postedAt: string;
     applyLink: string;
-    description: string;
+    description: object;
   };
 }
 

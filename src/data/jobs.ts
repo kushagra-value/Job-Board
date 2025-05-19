@@ -7,7 +7,7 @@ export interface Job {
   skills: string[];
   postedAt: string;
   applyLink: string;
-  description: string;
+  description: object;
   requirements?: string[];
   responsibilities?: string[];
   type: string; // full-time, part-time, contract, etc.

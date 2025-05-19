@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { formatSalary } from "@/lib/utils";
-import {
-  FiMapPin,
-  FiClock,
-  FiBriefcase,
-  FiDollarSign,
-  FiDownload,
-} from "react-icons/fi";
+import { FiMapPin, FiClock, FiBriefcase, FiDollarSign } from "react-icons/fi";
 import { ImProfile } from "react-icons/im";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -24,8 +18,8 @@ interface JobDetailsProps {
     salary: string | number;
     skills: string[];
     postedAt: string;
-    applyLink?: string; // Made optional
-    description: string;
+    applyLink?: string;
+    description: string | Record<string, any>;
     requirements?: string[];
     responsibilities?: string[];
     aboutCompany?: string;
@@ -34,9 +28,21 @@ interface JobDetailsProps {
   };
 }
 
+// Utility to turn snake_case or camelCase into Title Case
+function formatTitle(key: string) {
+  return key
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .split(/[_\s]+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
 export function JobDetails({ job }: JobDetailsProps) {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+
+  // Normalize description object if not string
+  const descObj = typeof job.description === "object" ? job.description : {};
 
   return (
     <>
@@ -47,11 +53,9 @@ export function JobDetails({ job }: JobDetailsProps) {
             <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
               {/* Header */}
               <div className="p-6 border-b">
-                <div className="flex justify-between">
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    {job.title}
-                  </h1>
-                </div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {job.title}
+                </h1>
                 <div className="mt-2 flex items-center text-gray-700">
                   <FiBriefcase className="mr-2 h-5 w-5 text-gray-500" />
                   <span className="font-medium">{job.company}</span>
@@ -82,9 +86,9 @@ export function JobDetails({ job }: JobDetailsProps) {
                   Required Skills
                 </h2>
                 <div className="flex flex-wrap gap-2">
-                  {job.skills.map((skill, index) => (
+                  {job.skills.map((skill, idx) => (
                     <span
-                      key={index}
+                      key={idx}
                       className="inline-flex items-center rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700"
                     >
                       {skill}
@@ -93,72 +97,104 @@ export function JobDetails({ job }: JobDetailsProps) {
                 </div>
               </div>
 
-              {/* Description */}
+              {/* Description with dynamic sub-sections */}
               <div className="p-6 border-b">
                 <h2 className="text-lg font-semibold text-gray-900 mb-3">
                   Job Description
                 </h2>
                 <div className="prose max-w-none">
-                  <p className="text-gray-700 whitespace-pre-line">
-                    {job.description}
-                  </p>
-                  <p className="text-gray-700 mt-3">{job.about_the_role}</p>
+                  {typeof job.description === "string" ? (
+                    <p className="text-gray-700 whitespace-pre-line">
+                      {job.description}
+                    </p>
+                  ) : (
+                    Object.entries(descObj).map(([key, val]) => (
+                      <div key={key} className="mb-4">
+                        <h3 className="text-md font-semibold text-gray-800 mb-2">
+                          {formatTitle(key)}
+                        </h3>
+                        {Array.isArray(val) ? (
+                          <ul className="list-disc list-inside text-gray-700">
+                            {val.map((item: any, i: number) => (
+                              <li key={i} className="whitespace-pre-line">
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-gray-700 whitespace-pre-line">
+                            {val}
+                          </p>
+                        )}
+                      </div>
+                    ))
+                  )}
+
+                  {/* If about_the_role not in description, render fallback */}
+                  {job.about_the_role && !descObj["aboutTheRole"] && (
+                    <div className="mb-4">
+                      <h3 className="text-md font-semibold text-gray-800 mt-6 mb-2">
+                        About The Role
+                      </h3>
+                      <p className="text-gray-700 whitespace-pre-line">
+                        {job.about_the_role}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* If responsibilities not in description, render fallback
+                  {job.responsibilities && !descObj["keyResponsibilities"] && (
+                    <div className="mb-4">
+                      <h3 className="text-md font-semibold text-gray-800 mt-6 mb-2">
+                        Key Responsibilities
+                      </h3>
+                      <ul className="list-disc list-inside text-gray-700">
+                        {job.responsibilities.map((r, i) => (
+                          <li key={i} className="whitespace-pre-line">
+                            {r}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )} */}
                 </div>
               </div>
-
-              {/* Responsibilities */}
-              {job.responsibilities && job.responsibilities.length > 0 && (
-                <div className="p-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-3">
-                    Responsibilities
-                  </h2>
-                  <ul className="list-disc pl-5 space-y-2">
-                    {job.responsibilities.map((responsibility, index) => (
-                      <li key={index} className="text-gray-700">
-                        {responsibility}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Action card */}
+            {/* Apply card */}
             <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
               <div className="p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">
                   Apply for this job
                 </h2>
-                <div className="space-y-3">
-                  <Button
-                    onClick={() => setIsUploadModalOpen(true)}
-                    className="w-full mb-3 h-11"
+                <Button
+                  onClick={() => setIsUploadModalOpen(true)}
+                  className="w-full mb-3 h-11"
+                >
+                  Check Compatibility
+                </Button>
+                {job.applyLink ? (
+                  <Link
+                    href={job.applyLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    Check Compatibility
-                  </Button>
-                  {job.applyLink ? (
-                    <Link
-                      href={job.applyLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Button className="w-full" variant="outline">
-                        Apply Now
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button className="w-full" disabled>
-                      Apply Now (Link Unavailable)
+                    <Button className="w-full" variant="outline">
+                      Apply Now
                     </Button>
-                  )}
-                </div>
+                  </Link>
+                ) : (
+                  <Button className="w-full" disabled>
+                    Apply Now (Unavailable)
+                  </Button>
+                )}
               </div>
             </div>
 
-            {/* Company card */}
+            {/* Company info */}
             <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
               <div className="p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">
@@ -166,7 +202,7 @@ export function JobDetails({ job }: JobDetailsProps) {
                 </h2>
                 <p className="text-gray-700 mb-4">{job.aboutCompany}</p>
                 <Link
-                  href={`https://www.linkedin.com/company/${job.company}/posts/?feedView=all
+                  href={`https://www.linkedin.com/company/${job.company
                     .toLowerCase()
                     .replace(/\s+/g, "-")}`}
                   className="text-primary-600 hover:text-primary-700 font-medium"
@@ -176,45 +212,29 @@ export function JobDetails({ job }: JobDetailsProps) {
               </div>
             </div>
 
-            {/* Similar jobs */}
+            {/* Similar jobs placeholder */}
             <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
               <div className="p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">
                   Similar Jobs
                 </h2>
-                <div className="space-y-4">
-                  {[1].map((i) => (
-                    // <div
-                    //   key={i}
-                    //   className="border-b pb-4 last:border-0 last:pb-0"
-                    // >
-                    //   <h3 className="font-medium text-gray-900 hover:text-primary-600">
-                    //     <Link href={`/jobs/${i}`}>Senior {job.title}</Link>
-                    //   </h3>
-                    //   <p className="text-sm text-gray-600 mt-1">
-                    //     {job.company}
-                    //   </p>
-                    //   <div className="flex items-center text-sm text-gray-600 mt-1">
-                    //     <FiMapPin className="mr-1 h-3 w-3" />
-                    //     <span>{job.location}</span>
-                    //   </div>
-                    // </div>
-                    <div>Coming Soon...</div>
-                  ))}
-                </div>
+                <div>Coming Soon...</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Resume upload modal */}
       <ResumeUploadModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         jobTitle={job.title}
         skills={job.skills}
-        jobDescription={job.description}
+        jobDescription={
+          typeof job.description === "string"
+            ? job.description
+            : JSON.stringify(job.description)
+        }
         requiredExperience={job.experience || "0 years"}
       />
     </>
