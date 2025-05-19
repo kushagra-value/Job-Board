@@ -18,14 +18,15 @@ export async function fetchAllJobs(): Promise<Job[]> {
     // Map MongoDB documents to your Job interface
     const mappedJobs: Job[] = jobs.map((job) => ({
       id: job._id.toString(),
-      title: job.job_title || "",
+      job_id: job.job_id || "",
+      title: job.title || "",
       company: job.company_name || "",
       location: job.location || "",
       salary: job.salary_offered || "Not Disclosed",
       skills: job.skills || [],
-      postedAt: job.time_when_posted || new Date().toISOString(),
-      applyLink: job.apply_link || "",
-      description: job.job_description || "",
+      postedAt: job.time_when_posted || "N/A",
+      applyLink: job.apply_options[0].link || job.share_link || "",
+      description: job.description || "",
       responsibilities: job.key_responsibilities
         ? [job.key_responsibilities]
         : [],
@@ -60,17 +61,15 @@ export async function fetchJobById(id: string): Promise<Job | null> {
     if (job) {
       return {
         id: job._id.toString(),
-        title: job.job_title || "",
+        job_id: job.job_id || "",
+        title: job.title || "",
         company: job.company_name || "",
         location: job.location || "",
         salary: job.salary_offered || "Not Disclosed",
         skills: job.skills || [],
-        postedAt: job.time_when_posted || new Date().toISOString(),
-        applyLink: job.apply_link || "",
-        description: job.job_description || "",
-        requirements: job.key_responsibilities
-          ? [job.key_responsibilities]
-          : [],
+        postedAt: job.time_when_posted || "N/A",
+        applyLink: job.apply_options[0].link || job.share_link || "",
+        description: job.description || "",
         responsibilities: job.key_responsibilities
           ? [job.key_responsibilities]
           : [],

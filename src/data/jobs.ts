@@ -1,5 +1,6 @@
 export interface Job {
   id: string;
+  job_id: string;
   title: string;
   company: string;
   location: string;

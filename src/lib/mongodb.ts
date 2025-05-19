@@ -1,6 +1,6 @@
 import { MongoClient, Db } from "mongodb";
 import "dotenv/config";
-const dbName = "google_jobs_db";
+const dbName = "g_jobs_serp_api";
 
 let cachedClient: MongoClient | null = null;
 let cachedDb: Db | null = null;
