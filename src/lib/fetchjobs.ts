@@ -25,7 +25,10 @@ export async function fetchAllJobs(): Promise<Job[]> {
       salary: job.salary_offered || "Not Disclosed",
       skills: job.skills || [],
       postedAt: job.time_when_posted || "N/A",
-      applyLink: job.apply_options[0].link || job.share_link || "",
+      applyLink:
+        (Array.isArray(job.apply_options) && job.apply_options.length > 0
+          ? job.apply_options[0].link
+          : job.share_link) || "",
       description: job.description || "",
       responsibilities: job.key_responsibilities
         ? [job.key_responsibilities]
@@ -68,7 +71,10 @@ export async function fetchJobById(id: string): Promise<Job | null> {
         salary: job.salary_offered || "Not Disclosed",
         skills: job.skills || [],
         postedAt: job.time_when_posted || "N/A",
-        applyLink: job.apply_options[0].link || job.share_link || "",
+        applyLink:
+          (Array.isArray(job.apply_options) && job.apply_options.length > 0
+            ? job.apply_options[0].link
+            : job.share_link) || "",
         description: job.description || "",
         responsibilities: job.key_responsibilities
           ? [job.key_responsibilities]
