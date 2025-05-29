@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ResumeUploadModal } from "@/components/resume/resume-upload-modal";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase"; // Ensure Supabase client is configured here
+import { v4 as uuidv4 } from "uuid";
 
 interface JobDetailsProps {
   job: {
@@ -37,8 +39,106 @@ function formatTitle(key: string) {
     .join(" ");
 }
 
+// New ApplyResumeModal Component
+interface ApplyResumeModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: () => void;
+}
+
+function ApplyResumeModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: ApplyResumeModalProps) {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+      setUploadError(null); // Clear any previous errors
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedFile) return;
+
+    // Validate file type
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (!allowedTypes.includes(selectedFile.type)) {
+      setUploadError("Please upload a PDF, DOC, or DOCX file.");
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      setUploadError("File size exceeds 5MB limit.");
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      // Generate a unique file name
+      const fileName = `${uuidv4()}-${selectedFile.name}`;
+      const { data, error } = await supabase.storage
+        .from("applicants-resume")
+        .upload(fileName, selectedFile);
+
+      if (error) throw error;
+
+      // Upload successful, proceed to onSubmit
+      onSubmit();
+    } catch (err) {
+      setUploadError("Failed to upload resume. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-xl font-bold mb-2">Upload Your Resume</h2>
+        <p className="text-gray-600 mb-6">
+          Please upload your resume to proceed with the application.
+        </p>
+        <input
+          type="file"
+          accept=".pdf,.doc,.docx"
+          onChange={handleFileChange}
+          className="mb-6 w-full"
+        />
+        {/* {selectedFile && <p className="text-green-600 mt-2">Uploaded</p>} */}
+        {uploadError && <p className="text-red-500 mt-2">{uploadError}</p>}
+        <div className="flex justify-end space-x-2">
+          <Button onClick={onClose} variant="outline">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={!selectedFile || isUploading}
+          >
+            {isUploading ? "Uploading..." : "Submit and Apply"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function JobDetails({ job }: JobDetailsProps) {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
   // Normalize description object if not string
@@ -170,22 +270,20 @@ export function JobDetails({ job }: JobDetailsProps) {
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">
                   Apply for this job
                 </h2>
-                <Button
+                {/* <Button
                   onClick={() => setIsUploadModalOpen(true)}
                   className="w-full mb-3 h-11"
                 >
                   Check Compatibility
-                </Button>
+                </Button> */}
                 {job.applyLink ? (
-                  <Link
-                    href={job.applyLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Button
+                    onClick={() => setIsApplyModalOpen(true)}
+                    className="w-full"
+                    variant="outline"
                   >
-                    <Button className="w-full" variant="outline">
-                      Apply Now
-                    </Button>
-                  </Link>
+                    Apply Now
+                  </Button>
                 ) : (
                   <Button className="w-full" disabled>
                     Apply Now (Unavailable)
@@ -225,6 +323,7 @@ export function JobDetails({ job }: JobDetailsProps) {
         </div>
       </div>
 
+      {/* Existing ResumeUploadModal */}
       <ResumeUploadModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
@@ -236,6 +335,18 @@ export function JobDetails({ job }: JobDetailsProps) {
             : JSON.stringify(job.description)
         }
         requiredExperience={job.experience || "0 years"}
+      />
+
+      {/* New ApplyResumeModal */}
+      <ApplyResumeModal
+        isOpen={isApplyModalOpen}
+        onClose={() => setIsApplyModalOpen(false)}
+        onSubmit={() => {
+          setIsApplyModalOpen(false);
+          if (job.applyLink) {
+            window.open(job.applyLink, "_blank");
+          }
+        }}
       />
     </>
   );
